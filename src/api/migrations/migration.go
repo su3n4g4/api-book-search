@@ -1,15 +1,32 @@
 package main
 
 import (
-	"api-book-search/infra"
-	"api-book-search/models"
+	"api-book-search/internal/memo/entity"
+	"api-book-search/pkg/infrastructure"
+	"fmt"
+	"log"
+	"os"
 )
 
 func main() {
-    infra.Initialize()
-	db := infra.SetupDB()
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
+	if dsn == "" {
+		log.Fatal("DB_DSN is not set")
+	}
 
-	if err := db.AutoMigrate(&models.Item{}); err != nil {
-		panic("Failed to migrate database")
+	db, err := infrastructure.NewDB(dsn)
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+
+	if err := db.AutoMigrate(&entity.Memo{}); err != nil {
+		panic("failed to migrate database")
 	}
 }
