@@ -4,6 +4,7 @@ import (
 	"api-book-search/internal/book/handler"
 	"api-book-search/internal/book/repository"
 	"api-book-search/internal/book/usecase"
+	"api-book-search/middleware"
 	"fmt"
 	"log"
 	"os"
@@ -12,8 +13,6 @@ import (
 )
 
 func main() {
-	// TODO: ミドルウェアの設定を追加
-
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True",
 		os.Getenv("DB_USER"),
@@ -44,6 +43,7 @@ func main() {
 	apiKey := os.Getenv("GOOGLE_BOOKS_API_KEY")
 
 	router := gin.Default()
+	router.Use(middleware.ErrorHandler())
 
 	// DI
 	bookRepo := repository.NewGoogleBooksRepository(apiKey)

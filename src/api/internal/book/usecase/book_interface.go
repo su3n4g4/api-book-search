@@ -2,9 +2,10 @@ package usecase
 
 import (
 	"api-book-search/internal/book/entity"
+	"context"
 )
 
 type BookUsecase interface {
-	SearchBooks(query string) ([]*entity.Book, error)
-	GetBookByID(id string) (*entity.Book, error)
+	SearchBooks(ctx context.Context, query string) ([]*entity.Book, error)
+	GetBookByID(ctx context.Context, id string) (*entity.Book, error)
 }
